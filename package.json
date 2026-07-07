@@ -1,0 +1,143 @@
+{
+  "name": "arduino-bot",
+  "displayName": "ArduinoBot - AI Arduino Assistant",
+  "description": "AI-powered coding assistant for Arduino development. Chat, compile, upload, and debug — all from the sidebar.",
+  "version": "0.1.0",
+  "publisher": "arduinobot",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Machine Learning",
+    "Education"
+  ],
+  "keywords": [
+    "arduino",
+    "ai",
+    "assistant",
+    "embedded",
+    "iot"
+  ],
+  "activationEvents": [
+    "onLanguage:cpp",
+    "onLanguage:arduino",
+    "workspaceContains:**/*.ino"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "arduinoBot.openChat",
+        "title": "ArduinoBot: Open Chat"
+      },
+      {
+        "command": "arduinoBot.compile",
+        "title": "ArduinoBot: Compile Sketch"
+      },
+      {
+        "command": "arduinoBot.upload",
+        "title": "ArduinoBot: Upload Sketch"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "arduinoBot",
+          "title": "ArduinoBot",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "arduinoBot": [
+        {
+          "type": "webview",
+          "id": "arduinoBot.chatView",
+          "name": "Chat"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "ArduinoBot",
+      "properties": {
+        "arduinoBot.provider": {
+          "type": "string",
+          "default": "anthropic",
+          "enum": [
+            "anthropic",
+            "openai",
+            "gemini",
+            "mistral",
+            "ollama",
+            "openrouter",
+            "groq",
+            "custom-openai"
+          ],
+          "description": "AI provider to use"
+        },
+        "arduinoBot.model": {
+          "type": "string",
+          "default": "claude-opus-4-8",
+          "description": "Model ID for the selected provider"
+        },
+        "arduinoBot.arduinoCliPath": {
+          "type": "string",
+          "default": "arduino-cli",
+          "description": "Path to arduino-cli executable"
+        },
+        "arduinoBot.defaultBaudRate": {
+          "type": "number",
+          "default": 9600,
+          "description": "Default serial monitor baud rate"
+        },
+        "arduinoBot.searchProvider": {
+          "type": "string",
+          "enum": [
+            "none",
+            "tavily",
+            "brave"
+          ],
+          "default": "none",
+          "description": "Web search provider (optional, requires API key)"
+        },
+        "arduinoBot.ollamaUrl": {
+          "type": "string",
+          "default": "http://localhost:11434",
+          "description": "Ollama server URL"
+        },
+        "arduinoBot.customOpenaiUrl": {
+          "type": "string",
+          "default": "",
+          "description": "Custom OpenAI-compatible API endpoint URL"
+        }
+      }
+    },
+    "keybindings": [
+      {
+        "command": "arduinoBot.openChat",
+        "key": "ctrl+shift+a",
+        "mac": "cmd+shift+a"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "package": "vsce package --no-dependencies",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^2.22.0",
+    "esbuild": "^0.20.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.2.0"
+  }
+}

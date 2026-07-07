@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.vsix
+.env
+*.map
+.DS_Store
+.claude/
+installer/Output/
