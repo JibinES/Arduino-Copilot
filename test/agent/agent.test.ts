@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
+import { resolve, join } from "path";
 import { MessageHistory } from "../../src/agent/message-history";
 import { Agent, type AgentEvent } from "../../src/agent/agent";
 import { resolveWithinWorkspace } from "../../src/agent/tools/path-utils";
@@ -120,12 +121,13 @@ describe("MessageHistory", () => {
 });
 
 describe("resolveWithinWorkspace", () => {
-  const root = "/tmp/workspace";
+  // Normalize to the host OS so assertions hold on Windows (D:\...) too.
+  const root = resolve("/tmp/workspace");
 
   it("allows paths inside the workspace", () => {
-    expect(resolveWithinWorkspace(root, "sketch.ino")).toBe("/tmp/workspace/sketch.ino");
-    expect(resolveWithinWorkspace(root, "sub/dir/file.h")).toBe("/tmp/workspace/sub/dir/file.h");
-    expect(resolveWithinWorkspace(root, ".")).toBe("/tmp/workspace");
+    expect(resolveWithinWorkspace(root, "sketch.ino")).toBe(join(root, "sketch.ino"));
+    expect(resolveWithinWorkspace(root, "sub/dir/file.h")).toBe(join(root, "sub", "dir", "file.h"));
+    expect(resolveWithinWorkspace(root, ".")).toBe(root);
   });
 
   it("rejects traversal outside the workspace", () => {
@@ -135,7 +137,7 @@ describe("resolveWithinWorkspace", () => {
   });
 
   it("rejects sibling directories with the workspace as a prefix", () => {
-    expect(resolveWithinWorkspace(root, "/tmp/workspaceXYZ/file")).toBeNull();
+    expect(resolveWithinWorkspace(root, resolve("/tmp/workspaceXYZ/file"))).toBeNull();
   });
 });
 

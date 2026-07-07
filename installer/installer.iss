@@ -47,9 +47,16 @@ Source: "..\dist\*";        DestDir: "{app}\dist";  Flags: recursesubdirs create
 Source: "..\package.json";  DestDir: "{app}";       Flags: ignoreversion
 Source: "..\media\*";       DestDir: "{app}\media"; Flags: recursesubdirs createallsubdirs ignoreversion
 
+[UninstallDelete]
+; Remove the arduino-cli copy this installer placed (leave Arduino IDE's own alone).
+Type: filesandordirs; Name: "{userprofile}\.arduinoIDE\arduino-bot-cli"
+
+; NOTE: [Code] must be the LAST section — Inno Setup treats everything after it as
+; Pascal code, so no [Section] tags may follow.
 [Code]
 var
   DownloadPage: TDownloadWizardPage;
+  DownloadNeeded: Boolean;
 
 // --- Detection helpers -----------------------------------------------------
 
@@ -108,13 +115,20 @@ begin
   if CurPageID = wpReady then
   begin
     DownloadPage.Clear;
+    DownloadNeeded := False;
     if not IsArduinoIdeInstalled() then
+    begin
       DownloadPage.Add('{#ArduinoIdeUrl}', 'arduino-ide-setup.exe', '');
+      DownloadNeeded := True;
+    end;
     if not IsArduinoCliPresent() then
+    begin
       DownloadPage.Add('{#ArduinoCliUrl}', 'arduino-cli.zip', '');
+      DownloadNeeded := True;
+    end;
 
     // Nothing to fetch? Skip the download page entirely.
-    if DownloadPage.NeedDownload() then
+    if DownloadNeeded then
     begin
       DownloadPage.Show;
       try
@@ -178,7 +192,3 @@ begin
       ExtractArduinoCli();
   end;
 end;
-
-[UninstallDelete]
-; Remove the arduino-cli copy this installer placed (leave Arduino IDE's own alone).
-Type: filesandordirs; Name: "{userprofile}\.arduinoIDE\arduino-bot-cli"

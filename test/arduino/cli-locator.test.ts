@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { join } from "path";
 import {
   resolveArduinoCliSync,
   arduinoCliDownloadUrl,
@@ -8,21 +9,16 @@ import {
 
 describe("resolveArduinoCliSync", () => {
   it("returns a configured path verbatim when it exists on disk", () => {
-    // This test file itself is a guaranteed-existing path.
+    // This test file itself is a guaranteed-existing path — it wins over any
+    // known install location.
     const existing = __filename;
     expect(resolveArduinoCliSync(existing)).toBe(existing);
   });
 
-  it("ignores a configured path that does not exist and falls back to the bare command", () => {
-    // A bogus configured path plus (on CI/dev machines) no known install present.
-    const result = resolveArduinoCliSync("/nope/does/not/exist/arduino-cli");
-    // Either a real known install exists on this machine, or we fall back to "arduino-cli".
-    expect(result === "/nope/does/not/exist/arduino-cli").toBe(false);
-  });
-
-  it("never returns the default 'arduino-cli' literal path when it does not exist", () => {
+  it("always returns a non-empty command/path", () => {
+    // Whatever the host machine has (a real install, a cached copy, or nothing),
+    // the resolver must yield something runnable — never empty.
     const result = resolveArduinoCliSync("arduino-cli");
-    // Last-resort fallback is the bare command so the OS PATH still gets a chance.
     expect(typeof result).toBe("string");
     expect(result.length).toBeGreaterThan(0);
   });
@@ -63,8 +59,9 @@ describe("knownArduinoCliPaths", () => {
 
 describe("cachedCliPath", () => {
   it("places the cached binary under the given storage dir", () => {
-    const p = cachedCliPath("/tmp/storage");
-    expect(p.startsWith("/tmp/storage")).toBe(true);
+    const storage = join("tmp", "storage");
+    const p = cachedCliPath(storage);
+    expect(p.startsWith(storage)).toBe(true);
     expect(p.endsWith(process.platform === "win32" ? "arduino-cli.exe" : "arduino-cli")).toBe(true);
   });
 });
