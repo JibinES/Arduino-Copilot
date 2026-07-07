@@ -266,6 +266,17 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
+    vscode.commands.registerCommand("arduinoBot.newProject", () => {
+      vscode.commands.executeCommand("arduinoBot.chatView.focus");
+      chatPanel.postMessage({
+        type: "assistantMessage",
+        content:
+          "Let's start a new project. Tell me your board (e.g. Uno, Nano, ESP32) and what you want to build — the sensors/outputs and how it should behave — and I'll scaffold the code, install the libraries, compile it, and give you a wiring table.",
+      });
+    }),
+  );
+
+  context.subscriptions.push(
     vscode.commands.registerCommand("arduinoBot.compile", () => {
       chatPanel.postMessage({
         type: "assistantMessage",

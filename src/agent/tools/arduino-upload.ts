@@ -3,6 +3,7 @@ import { promisify } from "util";
 import * as path from "path";
 import type { ITool, ToolContext, ToolCallOutput } from "./types.js";
 import type { ToolDefinition } from "../../providers/types.js";
+import { parseUploadErrors, formatUploadDiagnosis } from "../../arduino/error-parser.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -118,6 +119,10 @@ export class ArduinoUploadTool implements ITool {
       } else {
         output += error.message || "Unknown error";
       }
+
+      // Upload Doctor: attach plain-English cause(s) + fixes for the AI to relay.
+      const combined = `${error.stderr || ""}\n${error.stdout || ""}\n${error.message || ""}`;
+      output += formatUploadDiagnosis(parseUploadErrors(combined));
 
       return { content: output, isError: true };
     }

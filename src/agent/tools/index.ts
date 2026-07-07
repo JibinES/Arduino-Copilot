@@ -10,6 +10,7 @@ import { ArduinoUploadTool } from "./arduino-upload.js";
 import { ArduinoBoardsTool } from "./arduino-boards.js";
 import { SerialMonitorTool } from "./serial-monitor.js";
 import { ArduinoLibraryTool } from "./arduino-library.js";
+import { AnalyzePinsTool } from "./analyze-pins.js";
 import { WebSearchTool } from "./web-search.js";
 import { WebFetchTool } from "./web-fetch.js";
 
@@ -18,7 +19,7 @@ export function registerCoreTools(
   searchApiKey?: string,
   searchProvider?: string,
 ): void {
-  // 10 core tools — always available
+  // 11 core tools — always available
   executor.registerTool(new ReadFileTool());
   executor.registerTool(new WriteFileTool());
   executor.registerTool(new EditFileTool());
@@ -30,6 +31,7 @@ export function registerCoreTools(
   executor.registerTool(new ArduinoBoardsTool());
   executor.registerTool(new SerialMonitorTool());
   executor.registerTool(new ArduinoLibraryTool());
+  executor.registerTool(new AnalyzePinsTool());
 
   // 2 optional web tools — only if search API key is configured
   if (searchApiKey && searchProvider) {

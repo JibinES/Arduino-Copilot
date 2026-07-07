@@ -2,7 +2,7 @@
   "name": "arduino-bot",
   "displayName": "ArduinoBot - AI Arduino Assistant",
   "description": "AI-powered coding assistant for Arduino development. Chat, compile, upload, and debug — all from the sidebar.",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "publisher": "arduinobot",
   "license": "MIT",
   "engines": {
@@ -31,6 +31,10 @@
       {
         "command": "arduinoBot.openChat",
         "title": "ArduinoBot: Open Chat"
+      },
+      {
+        "command": "arduinoBot.newProject",
+        "title": "ArduinoBot: New Project from Goal"
       },
       {
         "command": "arduinoBot.compile",

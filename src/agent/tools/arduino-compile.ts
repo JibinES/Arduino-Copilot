@@ -3,6 +3,7 @@ import { promisify } from "util";
 import * as path from "path";
 import type { ITool, ToolContext, ToolCallOutput } from "./types.js";
 import type { ToolDefinition } from "../../providers/types.js";
+import { parseMemoryUsage, formatMemoryAdvice } from "../../arduino/error-parser.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -91,6 +92,12 @@ export class ArduinoCompileTool implements ITool {
         }
         if (result.compiler_err) {
           output += `\nCompiler warnings/info:\n${result.compiler_err}`;
+        }
+        // Memory Advisor: flag near-full flash/SRAM so the AI proactively helps.
+        const mem = parseMemoryUsage(stdout);
+        if (mem) {
+          const advice = formatMemoryAdvice(mem);
+          if (advice) output += `\n\n${advice}`;
         }
         return { content: output };
       } catch {

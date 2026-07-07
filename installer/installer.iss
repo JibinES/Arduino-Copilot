@@ -14,9 +14,9 @@
 ; Prereq: run `npm run build` first so ..\dist exists.
 
 #define MyAppName "ArduinoBot"
-#define MyAppVersion "0.1.1"
+#define MyAppVersion "0.2.0"
 #define MyAppPublisher "ArduinoBot"
-#define ExtFolderName "arduino-bot-0.1.0"
+#define ExtFolderName "arduino-bot"
 
 ; Official download URLs (latest stable). Bump the IDE URL when a newer one is desired.
 #define ArduinoCliUrl "https://downloads.arduino.cc/arduino-cli/arduino-cli_latest_Windows_64bit.zip"
@@ -46,6 +46,10 @@ MinVersion=10.0
 Source: "..\dist\*";        DestDir: "{app}\dist";  Flags: recursesubdirs createallsubdirs ignoreversion
 Source: "..\package.json";  DestDir: "{app}";       Flags: ignoreversion
 Source: "..\media\*";       DestDir: "{app}\media"; Flags: recursesubdirs createallsubdirs ignoreversion
+
+[InstallDelete]
+; Remove the old versioned install folder so upgrading users don't get two copies.
+Type: filesandordirs; Name: "{%USERPROFILE}\.arduinoIDE\extensions\arduino-bot-0.1.0"
 
 [UninstallDelete]
 ; Remove the arduino-cli copy this installer placed (leave Arduino IDE's own alone).
