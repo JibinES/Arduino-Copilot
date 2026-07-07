@@ -29,7 +29,7 @@ AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 ; Per-user install — no administrator rights needed (matches the hobbyist audience).
 PrivilegesRequired=lowest
-DefaultDirName={userprofile}\.arduinoIDE\extensions\{#ExtFolderName}
+DefaultDirName={%USERPROFILE}\.arduinoIDE\extensions\{#ExtFolderName}
 DisableDirPage=yes
 DisableProgramGroupPage=yes
 UninstallDisplayName={#MyAppName} (Arduino IDE extension)
@@ -49,7 +49,7 @@ Source: "..\media\*";       DestDir: "{app}\media"; Flags: recursesubdirs create
 
 [UninstallDelete]
 ; Remove the arduino-cli copy this installer placed (leave Arduino IDE's own alone).
-Type: filesandordirs; Name: "{userprofile}\.arduinoIDE\arduino-bot-cli"
+Type: filesandordirs; Name: "{%USERPROFILE}\.arduinoIDE\arduino-bot-cli"
 
 ; NOTE: [Code] must be the LAST section — Inno Setup treats everything after it as
 ; Pascal code, so no [Section] tags may follow.
@@ -87,7 +87,7 @@ end;
 
 function InstallerCliDir(): String;
 begin
-  Result := ExpandConstant('{userprofile}\.arduinoIDE\arduino-bot-cli');
+  Result := ExpandConstant('{%USERPROFILE}\.arduinoIDE\arduino-bot-cli');
 end;
 
 function InstallerCliPath(): String;
