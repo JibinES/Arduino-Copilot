@@ -7,8 +7,7 @@ import { resolveWithinWorkspace, accessDeniedMessage } from "./path-utils.js";
 export class WriteFileTool implements ITool {
   readonly definition: ToolDefinition = {
     name: "write_file",
-    description:
-      "Write content to a file, creating parent directories as needed and overwriting if it exists.",
+    description: "Write a file, creating parent directories and overwriting if it exists.",
     parameters: {
       type: "object",
       properties: {

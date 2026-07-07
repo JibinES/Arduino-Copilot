@@ -12,7 +12,7 @@ export class RunCommandTool implements ITool {
   readonly definition: ToolDefinition = {
     name: "run_command",
     description:
-      "Run a shell command in the workspace (30s timeout). Use for general system commands not covered by a dedicated tool.",
+      "Run a shell command in the workspace (30s timeout) when no dedicated tool covers the task.",
     parameters: {
       type: "object",
       properties: {

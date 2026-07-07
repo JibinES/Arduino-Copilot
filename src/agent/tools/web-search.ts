@@ -27,7 +27,7 @@ export class WebSearchTool implements ITool {
   readonly definition: ToolDefinition = {
     name: "web_search",
     description:
-      "Search the web for Arduino docs, library references, and troubleshooting info. Returns titles, URLs, and snippets.",
+      "Web search for Arduino docs, libraries, and troubleshooting; returns titles, URLs, snippets.",
     parameters: {
       type: "object",
       properties: {

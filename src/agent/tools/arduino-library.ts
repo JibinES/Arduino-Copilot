@@ -16,7 +16,7 @@ export class ArduinoLibraryTool implements ITool {
   readonly definition: ToolDefinition = {
     name: "arduino_library",
     description:
-      "Manage Arduino libraries: 'search' finds by name/keyword, 'install' installs (optional version 'Name@x.y.z'), 'list' shows installed. Use when a compile fails with a missing library header.",
+      "Arduino libraries: 'search' by name/keyword, 'install' (optionally 'Name@x.y.z'), 'list' installed. Use when a compile fails with a missing library header.",
     parameters: {
       type: "object",
       properties: {

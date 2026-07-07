@@ -2,7 +2,7 @@
   "name": "arduino-bot",
   "displayName": "ArduinoBot - AI Arduino Assistant",
   "description": "AI-powered coding assistant for Arduino development. Chat, compile, upload, and debug — all from the sidebar.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "arduinobot",
   "license": "MIT",
   "engines": {
@@ -79,7 +79,7 @@
         },
         "arduinoBot.model": {
           "type": "string",
-          "default": "claude-opus-4-8",
+          "default": "claude-haiku-4-5",
           "description": "Model ID for the selected provider"
         },
         "arduinoBot.arduinoCliPath": {

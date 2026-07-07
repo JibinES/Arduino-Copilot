@@ -13,8 +13,7 @@ interface SearchMatch {
 export class SearchFilesTool implements ITool {
   readonly definition: ToolDefinition = {
     name: "search_files",
-    description:
-      "Search file contents by regex. Returns matching lines with file path and line number (max 50 matches).",
+    description: "Regex-search file contents; returns file:line matches (max 50).",
     parameters: {
       type: "object",
       properties: {

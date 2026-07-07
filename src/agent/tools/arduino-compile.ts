@@ -10,7 +10,7 @@ export class ArduinoCompileTool implements ITool {
   readonly definition: ToolDefinition = {
     name: "arduino_compile",
     description:
-      "Compile an Arduino sketch with arduino-cli. Returns output including errors/warnings. Auto-detects the connected board if fqbn is omitted.",
+      "Compile an Arduino sketch; returns errors/warnings. Auto-detects the board if fqbn is omitted.",
     parameters: {
       type: "object",
       properties: {

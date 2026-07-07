@@ -8,7 +8,7 @@ export class ListFilesTool implements ITool {
   readonly definition: ToolDefinition = {
     name: "list_files",
     description:
-      "List a directory. Defaults to the workspace root, non-recursive; recursive shows a tree up to 3 levels deep.",
+      "List a directory (default: workspace root); recursive shows a tree up to 3 levels deep.",
     parameters: {
       type: "object",
       properties: {

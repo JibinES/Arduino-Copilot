@@ -34,6 +34,7 @@ export function App() {
   const [providers, setProviders] = useState<ProviderInfo[]>([]);
   const [config, setConfig] = useState<Config | null>(null);
   const [board, setBoard] = useState<BoardInfo | null>(null);
+  const [availableModels, setAvailableModels] = useState<string[]>([]);
   const [wizardShown, setWizardShown] = useState(false);
   const { messages, isLoading, approval, addUserMessage, clearApproval } = useMessages();
   const vscode = useVsCode();
@@ -52,6 +53,8 @@ export function App() {
         }
       } else if (msg.type === "boardStatus") {
         setBoard(msg.board);
+      } else if (msg.type === "modelList") {
+        setAvailableModels(Array.isArray(msg.models) ? msg.models : []);
       }
     };
 
@@ -60,6 +63,11 @@ export function App() {
 
     return () => window.removeEventListener("message", handler);
   }, [wizardShown]);
+
+  // A loaded model list belongs to one provider; drop it when the provider changes.
+  useEffect(() => {
+    setAvailableModels([]);
+  }, [config?.provider]);
 
   const handleSend = useCallback(
     (text: string) => {
@@ -107,6 +115,8 @@ export function App() {
         onClose={() => setView("chat")}
         ollamaUrl={config?.ollamaUrl || "http://localhost:11434"}
         customOpenaiUrl={config?.customOpenaiUrl || ""}
+        availableModels={availableModels}
+        onLoadModels={vscode.listModels}
       />
     );
   }

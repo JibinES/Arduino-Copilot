@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 
 interface ProviderInfo {
   id: string;
@@ -18,6 +18,8 @@ interface SettingsViewProps {
   onClose: () => void;
   ollamaUrl: string;
   customOpenaiUrl: string;
+  availableModels?: string[];
+  onLoadModels?: () => void;
 }
 
 const s: Record<string, React.CSSProperties> = {
@@ -174,15 +176,35 @@ const SEARCH_PROVIDERS = [
 
 const URL_PROVIDERS = new Set(["ollama", "custom-openai"]);
 
+// Current default model per provider (shown as the input placeholder). Kept in
+// sync with src/config/provider-models.ts on the host side.
 const DEFAULT_MODELS: Record<string, string> = {
-  anthropic: "claude-opus-4-8",
-  openai: "gpt-4o",
-  gemini: "gemini-2.0-flash",
-  mistral: "mistral-large-latest",
-  ollama: "llama3.1",
-  openrouter: "anthropic/claude-opus-4.8",
-  groq: "llama-3.3-70b-versatile",
+  anthropic: "claude-haiku-4-5",
+  openai: "gpt-4.1-mini",
+  gemini: "gemini-2.5-flash",
+  mistral: "mistral-small-latest",
+  ollama: "llama3.2",
+  openrouter: "anthropic/claude-haiku-4-5",
+  groq: "openai/gpt-oss-20b",
   "custom-openai": "",
+};
+
+// Curated autocomplete suggestions per provider (fallback when the live API list
+// can't be fetched). Mirrors PROVIDER_MODEL_SUGGESTIONS on the host side.
+const MODEL_SUGGESTIONS: Record<string, string[]> = {
+  anthropic: ["claude-haiku-4-5", "claude-sonnet-4-6", "claude-opus-4-8"],
+  openai: ["gpt-4.1-mini", "gpt-4.1", "gpt-4o-mini", "gpt-4o"],
+  gemini: ["gemini-2.5-flash", "gemini-2.5-pro", "gemini-3.5-flash"],
+  mistral: ["mistral-small-latest", "mistral-large-latest", "codestral-latest"],
+  ollama: ["llama3.2", "qwen2.5-coder", "codellama", "mistral"],
+  openrouter: [
+    "anthropic/claude-haiku-4-5",
+    "google/gemini-2.5-flash",
+    "openai/gpt-4.1-mini",
+    "qwen/qwen3-coder",
+  ],
+  groq: ["openai/gpt-oss-20b", "openai/gpt-oss-120b", "groq/compound-mini"],
+  "custom-openai": ["gpt-4o-mini", "gpt-4o"],
 };
 
 const Chevron: React.FC<{ open: boolean }> = ({ open }) => (
@@ -223,6 +245,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   onClose,
   ollamaUrl,
   customOpenaiUrl,
+  availableModels = [],
+  onLoadModels,
 }) => {
   const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
   const [searchKeys, setSearchKeys] = useState<Record<string, string>>({});
@@ -232,6 +256,22 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   });
   const [model, setModel] = useState(currentModel || "");
   const [saved, setSaved] = useState<Record<string, boolean>>({});
+  const [loadingModels, setLoadingModels] = useState(false);
+
+  // A model list arrived (or the provider changed) — stop the loading spinner.
+  useEffect(() => {
+    setLoadingModels(false);
+  }, [availableModels]);
+
+  // Combined, de-duplicated model choices: live API results first, then curated.
+  const modelChoices = Array.from(
+    new Set([...availableModels, ...(MODEL_SUGGESTIONS[currentProvider] || [])]),
+  );
+
+  const handleLoadModels = useCallback(() => {
+    setLoadingModels(true);
+    onLoadModels?.();
+  }, [onLoadModels]);
 
   // Which top-level sections are open. Model + Providers open by default.
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -297,11 +337,13 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         onToggle={() => toggleSection("model")}
       >
         <div style={s.sectionHint}>
-          Model name for the active provider ({currentProviderName}).
+          Model for the active provider ({currentProviderName}). Pick a suggestion
+          or type any model id. Use “Load from API” to fetch this provider’s live list.
         </div>
         <div style={s.inputRow}>
           <input
             style={s.input}
+            list="model-choices"
             value={model}
             onChange={(e) => setModel(e.target.value)}
             placeholder={DEFAULT_MODELS[currentProvider] || "Enter model name"}
@@ -309,6 +351,25 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           <button style={s.saveBtn} onClick={handleSaveModel}>
             {saved["model"] ? "Saved!" : "Save"}
           </button>
+        </div>
+        <datalist id="model-choices">
+          {modelChoices.map((m) => (
+            <option key={m} value={m} />
+          ))}
+        </datalist>
+        <div style={{ ...s.inputRow, marginTop: 8, alignItems: "center" }}>
+          <button
+            style={{ ...s.backBtn, opacity: loadingModels ? 0.6 : 1 }}
+            onClick={handleLoadModels}
+            disabled={loadingModels}
+          >
+            {loadingModels ? "Loading…" : "Load from API"}
+          </button>
+          <span style={s.sublabel}>
+            {availableModels.length > 0
+              ? `${availableModels.length} models loaded`
+              : "Needs a valid API key / running server"}
+          </span>
         </div>
       </Section>
 

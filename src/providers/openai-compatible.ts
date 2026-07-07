@@ -1,4 +1,5 @@
 import { BaseProvider } from "./base-provider.js";
+import { defaultModelFor } from "../config/provider-models.js";
 import type {
   ChatMessage,
   ChatResponse,
@@ -23,7 +24,7 @@ export abstract class OpenAICompatibleProvider extends BaseProvider {
   protected abstract getHeaders(): Record<string, string>;
 
   protected getModel(): string {
-    return this.config.model;
+    return this.config.model || defaultModelFor(this.id);
   }
 
   async chat(

@@ -1,4 +1,5 @@
 import { BaseProvider } from "./base-provider.js";
+import { defaultModelFor } from "../config/provider-models.js";
 import type {
   ChatMessage,
   ChatResponse,
@@ -22,7 +23,7 @@ export class GeminiProvider extends BaseProvider {
     onStream: (event: StreamEvent) => void,
     signal: AbortSignal,
   ): Promise<ChatResponse> {
-    const model = this.config.model || "gemini-2.0-flash";
+    const model = this.config.model || defaultModelFor(this.id);
     const url = `${this.getBaseUrl()}/models/${model}:streamGenerateContent?alt=sse&key=${this.config.apiKey}`;
 
     const { systemInstruction, contents } = this.formatMessages(messages);
@@ -99,7 +100,19 @@ export class GeminiProvider extends BaseProvider {
   }
 
   async listModels(): Promise<string[]> {
-    return ["gemini-2.0-flash", "gemini-2.5-pro", "gemini-2.5-flash"];
+    try {
+      const res = await fetch(`${this.getBaseUrl()}/models?key=${this.config.apiKey}`);
+      if (!res.ok) return [];
+      const data = (await res.json()) as {
+        models?: Array<{ name?: string; baseModelId?: string; supportedGenerationMethods?: string[] }>;
+      };
+      return (data.models || [])
+        .filter((m) => !m.supportedGenerationMethods || m.supportedGenerationMethods.includes("generateContent"))
+        .map((m) => (m.baseModelId || m.name || "").replace(/^models\//, ""))
+        .filter(Boolean);
+    } catch {
+      return [];
+    }
   }
 
   private formatMessages(messages: ChatMessage[]) {

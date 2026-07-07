@@ -68,6 +68,10 @@ export function useVsCode() {
     api.postMessage({ type: "openSettings" });
   }, [api]);
 
+  const listModels = useCallback(() => {
+    api.postMessage({ type: "listModels" });
+  }, [api]);
+
   return {
     postMessage,
     sendMessage,
@@ -79,5 +83,6 @@ export function useVsCode() {
     setBaseUrl,
     approvalResponse,
     openSettings,
+    listModels,
   };
 }

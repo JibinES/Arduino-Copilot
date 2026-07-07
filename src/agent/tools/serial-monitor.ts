@@ -11,7 +11,7 @@ export class SerialMonitorTool implements ITool {
   readonly definition: ToolDefinition = {
     name: "serial_monitor",
     description:
-      "Serial monitor for a connected board: 'read' captures 3s of output, 'start'/'stop' manage a persistent session. Optionally send data first.",
+      "Board serial monitor: 'read' captures 3s of output, 'start'/'stop' manage a session; can send data first.",
     parameters: {
       type: "object",
       properties: {

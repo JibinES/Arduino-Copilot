@@ -7,6 +7,7 @@ import type { WebviewToExtMessage, ProviderInfoItem, WebviewConfig } from "./web
 import type { StreamEvent, ProviderConfig } from "./providers/types.js";
 import { Agent } from "./agent/agent.js";
 import { resolveArduinoCliSync, ensureArduinoCliDownloaded } from "./arduino/cli-locator.js";
+import { defaultModelFor } from "./config/provider-models.js";
 
 let agent: Agent | undefined;
 let abortController: AbortController | undefined;
@@ -166,9 +167,14 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       case "setProvider": {
-        await vscode.workspace
-          .getConfiguration("arduinoBot")
-          .update("provider", message.providerId, vscode.ConfigurationTarget.Global);
+        const cfg = vscode.workspace.getConfiguration("arduinoBot");
+        await cfg.update("provider", message.providerId, vscode.ConfigurationTarget.Global);
+        // Give the newly-selected provider a valid default model so its model id
+        // matches the provider (prevents "model not found" errors). Still editable.
+        const def = defaultModelFor(message.providerId);
+        if (def) {
+          await cfg.update("model", def, vscode.ConfigurationTarget.Global);
+        }
         break;
       }
 
@@ -213,6 +219,19 @@ export function activate(context: vscode.ExtensionContext) {
 
       case "getConfig": {
         chatPanel.postMessage({ type: "configUpdate", config: await buildWebviewConfig() });
+        break;
+      }
+
+      case "listModels": {
+        // Ask the active provider for its live model catalog; empty on failure
+        // (offline, bad key) so the UI falls back to its curated suggestions.
+        try {
+          const provider = await getCurrentProvider();
+          const models = await provider.listModels();
+          chatPanel.postMessage({ type: "modelList", models });
+        } catch {
+          chatPanel.postMessage({ type: "modelList", models: [] });
+        }
         break;
       }
 

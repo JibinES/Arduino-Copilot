@@ -1,4 +1,5 @@
 import { OpenAICompatibleProvider } from "./openai-compatible.js";
+import { defaultModelFor } from "../config/provider-models.js";
 
 export class GroqProvider extends OpenAICompatibleProvider {
   readonly id = "groq";
@@ -14,6 +15,6 @@ export class GroqProvider extends OpenAICompatibleProvider {
   }
 
   protected getModel(): string {
-    return this.config.model || "llama-3.3-70b-versatile";
+    return this.config.model || defaultModelFor(this.id);
   }
 }

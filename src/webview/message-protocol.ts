@@ -10,6 +10,7 @@ export type ExtToWebviewMessage =
   | { type: "configUpdate"; config: WebviewConfig }
   | { type: "error"; message: string }
   | { type: "approvalRequest"; id: string; toolName: string; description: string }
+  | { type: "modelList"; models: string[] }
   | { type: "serialData"; data: string };
 
 // Webview -> Extension messages
@@ -24,6 +25,7 @@ export type WebviewToExtMessage =
   | { type: "approvalResponse"; id: string; approved: boolean }
   | { type: "getProviders" }
   | { type: "getConfig" }
+  | { type: "listModels" }
   | { type: "openSettings" }
   | { type: "serialSend"; data: string }
   | { type: "ready" };

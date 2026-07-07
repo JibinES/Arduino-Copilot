@@ -1,4 +1,5 @@
 import { BaseProvider } from "./base-provider.js";
+import { defaultModelFor } from "../config/provider-models.js";
 import type {
   ChatMessage,
   ChatResponse,
@@ -31,7 +32,7 @@ export class AnthropicProvider extends BaseProvider {
     const { systemPrompt, formattedMessages } = this.formatMessages(messages);
 
     const body: Record<string, unknown> = {
-      model: this.config.model || "claude-opus-4-8",
+      model: this.config.model || defaultModelFor(this.id),
       max_tokens: this.config.maxTokens || 4096,
       stream: true,
       messages: formattedMessages,
@@ -163,12 +164,19 @@ export class AnthropicProvider extends BaseProvider {
   }
 
   async listModels(): Promise<string[]> {
-    return [
-      "claude-opus-4-8",
-      "claude-opus-4-6",
-      "claude-sonnet-4-6",
-      "claude-haiku-4-5",
-    ];
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/models?limit=100", {
+        headers: {
+          "x-api-key": this.config.apiKey || "",
+          "anthropic-version": "2023-06-01",
+        },
+      });
+      if (!res.ok) return [];
+      const data = (await res.json()) as { data?: Array<{ id: string }> };
+      return (data.data || []).map((m) => m.id);
+    } catch {
+      return [];
+    }
   }
 
   private formatMessages(messages: ChatMessage[]) {

@@ -1,4 +1,5 @@
 import { OpenAICompatibleProvider } from "./openai-compatible.js";
+import { defaultModelFor } from "../config/provider-models.js";
 
 export class OllamaProvider extends OpenAICompatibleProvider {
   readonly id = "ollama";
@@ -14,7 +15,7 @@ export class OllamaProvider extends OpenAICompatibleProvider {
   }
 
   protected getModel(): string {
-    return this.config.model || "llama3.1";
+    return this.config.model || defaultModelFor(this.id);
   }
 
   async listModels(): Promise<string[]> {

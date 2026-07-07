@@ -4,7 +4,7 @@ export function getConfig() {
   const config = vscode.workspace.getConfiguration("arduinoBot");
   return {
     provider: config.get<string>("provider", "anthropic"),
-    model: config.get<string>("model", "claude-opus-4-8"),
+    model: config.get<string>("model", "claude-haiku-4-5"),
     arduinoCliPath: config.get<string>("arduinoCliPath", "arduino-cli"),
     defaultBaudRate: config.get<number>("defaultBaudRate", 9600),
     searchProvider: config.get<string>("searchProvider", "none"),

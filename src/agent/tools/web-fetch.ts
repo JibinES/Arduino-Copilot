@@ -6,8 +6,7 @@ const DEFAULT_MAX_LENGTH = 5000;
 export class WebFetchTool implements ITool {
   readonly definition: ToolDefinition = {
     name: "web_fetch",
-    description:
-      "Fetch a web page as plain text (HTML stripped). Useful for docs, library references, and datasheets.",
+    description: "Fetch a URL as plain text (HTML stripped); useful for docs and datasheets.",
     parameters: {
       type: "object",
       properties: {

@@ -8,7 +8,7 @@ export class EditFileTool implements ITool {
   readonly definition: ToolDefinition = {
     name: "edit_file",
     description:
-      "Replace the first exact occurrence of old_string with new_string in a file. old_string must match exactly, including whitespace and indentation.",
+      "Replace the first exact occurrence of old_string with new_string in a file; old_string must match exactly, whitespace included.",
     parameters: {
       type: "object",
       properties: {

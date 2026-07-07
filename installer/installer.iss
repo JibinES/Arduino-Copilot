@@ -14,7 +14,7 @@
 ; Prereq: run `npm run build` first so ..\dist exists.
 
 #define MyAppName "ArduinoBot"
-#define MyAppVersion "0.1.0"
+#define MyAppVersion "0.1.1"
 #define MyAppPublisher "ArduinoBot"
 #define ExtFolderName "arduino-bot-0.1.0"
 

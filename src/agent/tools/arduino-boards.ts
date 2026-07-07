@@ -25,8 +25,7 @@ interface BoardListEntry {
 export class ArduinoBoardsTool implements ITool {
   readonly definition: ToolDefinition = {
     name: "arduino_boards",
-    description:
-      "List connected Arduino boards with their names, FQBNs, and serial ports.",
+    description: "List connected Arduino boards (name, FQBN, serial port).",
     parameters: {
       type: "object",
       properties: {},
