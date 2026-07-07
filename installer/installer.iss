@@ -159,8 +159,8 @@ begin
 
   ForceDirectories(InstallerCliDir());
   // PowerShell ships on every supported Windows — no third-party unzip needed.
-  PsCmd := Format('-NoProfile -NonInteractive -Command "Expand-Archive -LiteralPath ''%s'' -DestinationPath ''%s'' -Force"',
-    [ZipPath, InstallerCliDir()]);
+  // Built by concatenation (not Format) to keep every line from starting with '['.
+  PsCmd := '-NoProfile -NonInteractive -Command "Expand-Archive -LiteralPath ''' + ZipPath + ''' -DestinationPath ''' + InstallerCliDir() + ''' -Force"';
   if not Exec('powershell.exe', PsCmd, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
     Log('Failed to launch PowerShell to extract arduino-cli.')
   else if ResultCode <> 0 then
